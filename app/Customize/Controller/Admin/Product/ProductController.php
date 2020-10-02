@@ -156,9 +156,9 @@ class ProductController extends AbstractController
      */
     public function index(Request $request, $page_no = null, Paginator $paginator)
     {
-//        dump( $this->getUser());
-//        exit();
-//        return new \Symfony\Component\HttpFoundation\Response( $this->getUser());
+        dump( $this->getUser()->getId());
+        exit();
+        return new \Symfony\Component\HttpFoundation\Response( $this->getUser());
         $builder = $this->formFactory
             ->createBuilder(SearchProductType::class);
 

@@ -13,6 +13,7 @@
 
 namespace Eccube\Controller;
 
+use Eccube\Entity\Customer;
 use Eccube\Entity\CustomerAddress;
 use Eccube\Entity\Order;
 use Eccube\Entity\Shipping;
@@ -38,6 +39,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Eccube\Repository\CustomerRepository;
 
 class ShoppingController extends AbstractShoppingController
 {
@@ -45,6 +47,11 @@ class ShoppingController extends AbstractShoppingController
      * @var CartService
      */
     protected $cartService;
+
+    /**
+     * @var CustomerRepository
+     */
+    protected $customerRepository;
 
     /**
      * @var MailService
@@ -65,12 +72,14 @@ class ShoppingController extends AbstractShoppingController
         CartService $cartService,
         MailService $mailService,
         OrderRepository $orderRepository,
-        OrderHelper $orderHelper
+        OrderHelper $orderHelper,
+        CustomerRepository $customerRepository
     ) {
         $this->cartService = $cartService;
         $this->mailService = $mailService;
         $this->orderRepository = $orderRepository;
         $this->orderHelper = $orderHelper;
+        $this->customerRepository = $customerRepository;
     }
 
     /**
@@ -505,8 +514,20 @@ class ShoppingController extends AbstractShoppingController
             'customer' => $this->getUser(),
             'shipping' => $Shipping,
         ]);
-        $customer =
+        $current_user = $this->getUser();
+        $stripe = new \Stripe\StripeClient(
+            'sk_test_ulFMDa6ztpmBFmvzl42TMeis00EKxiEHH6'
+        );
+        $stripe_customer = $stripe->customers->create([
+            'customer_id'=> $current_user->getId(),
+            'email'=> $current_user->getEmail(),
+            'description' => 'My First Test Customer (created for API docs)',
+        ]);
+        $customer = $this->customerRepository->find($current_user->getId());
 
+        $stripe_invoice = $stripe->invoices->create([
+            'customer'=> $stripe_customer->id
+        ]);
         $form = $builder->getForm();
         $form->handleRequest($request);
 
