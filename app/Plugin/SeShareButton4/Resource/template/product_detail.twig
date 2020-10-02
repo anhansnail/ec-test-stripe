@@ -1,0 +1,151 @@
+{#
+ Copyright(c) 2020 Shadow Enterprise, Inc. All rights reserved.
+ http://www.shadow-ep.co.jp/
+#}
+
+<!-- SNSシェアボタン -->
+<style>
+.ec-productRole__SNS_Share {
+  display: block;
+}
+.ec-productRole__SNS_Share ul {
+  display: -webkit-flex;
+  display: flex;
+  #margin: 0;
+  padding: 0;
+  justify-content: flex-start;
+  display: block;
+}
+.ec-productRole__SNS_Share .sns-share-button {
+  cursor: pointer;
+}
+.ec-productRole__SNS_Share li {
+  list-style: none;
+  margin: 0 3px;
+  display: inline-block;
+}
+.ec-productRole__SNS_Share li:first-child {
+  margin-left: 0;
+}
+.ec-productRole__SNS_Share li span {
+  vertical-align: middle;
+}
+.ec-productRole__SNS_Share li img,
+.ec-productRole__SNS_Share li svg {
+  height: 20px;
+  width: auto;
+  vertical-align: middle;
+}
+.ec-productRole__SNS_Share svg {
+  background-color: #fff;
+}
+#sns-share-email svg path {
+  fill: #000;
+}
+#sns-share-facebook svg path {
+  fill: #1777f2;
+}
+#sns-share-twitter svg path {
+  fill: #1a95e0;
+}
+#sns-share-line svg path {
+  fill: #00b901;
+}
+#sns-share-gplus svg path {
+  fill: #db4e41;
+}
+#sns-share-weibo svg path {
+  fill: #e0142c;
+}
+#sns-share-reddit svg path {
+  fill: #fe4400;
+}
+#sns-share-pinterest svg path {
+  fill: #ca1f26;
+}
+</style>
+<script>
+var configJson = '{{ ShareButtonConfig|raw }}';
+var btnList = $.parseJSON(configJson);
+
+console.log(btnList);
+$(function(){
+  initializeSNSButton();
+});
+
+function initializeSNSButton(){
+
+  if ( btnList.length == 0 ) {
+    return false;
+  }
+
+  var targetClass = '.ec-productRole__profile .ec-productRole__description';
+
+  var prefix = "{{ asset('SeShareButton4/assets/img/', 'plugin') }}";
+
+  addHtml = $('<div class="ec-productRole__SNS_Share"><ul><li><span>{{ 'se_share_button.front.label.share'|trans }}</span></li></ul></div>'),
+  $(targetClass).before(addHtml),
+  addHtml.ready(function() {
+    $.each(btnList, function(i, val) {
+      if ( val.enabled != 1 ) { return true; }
+      var pos = val.img.lastIndexOf('.');
+      if ( pos !== -1 && val.img.slice(pos + 1) == 'svg') {
+        addHtml2 = $('<li class="sns-share-button" id="sns-share-' + i + '"></li>'),
+        $('.ec-productRole__SNS_Share ul li:last-child').after(addHtml2),
+        addHtml2.ready(function() {
+          $('#sns-share-' + i).load(prefix + val.img);
+        })
+      } else {
+        $('.ec-productRole__SNS_Share ul li:last-child').after('<li class="sns-share-button" id="sns-share-' + i + '"><img src="' + prefix + val.img + '" /></li>');
+      }
+    })
+    loadSVGImage();
+  })
+
+}
+
+/* 表示する画像の読み込みと遷移先の設定 */
+function loadSVGImage(){
+  $('.sns-share-button').on('click', function(){
+    subject = encodeURIComponent("{{ BaseInfo.shop_name|raw }} | {{ Product.name|raw }}");
+    body = "{{ Product.name|raw }}\r\n{{ 'se_share_button.front.label.detail_announce'|trans }}：{{ url('product_detail', {'id': Product.id}) }}";
+    tag = "{{ BaseInfo.shop_name|raw }}";
+    {% for Tag in Product.Tags %}
+      tag += ",{{ Tag }}"
+    {% endfor %}
+
+    var shareUrl = '';
+    switch(this.id){
+      case 'sns-share-email':
+        location.href = btnList.email.url + '?subject=' + subject + '&body=' + encodeURIComponent(body);
+        break;
+      case 'sns-share-facebook':
+        baseUrl = btnList.facebook.url;
+        windowOpenUrl(baseUrl, 'u');
+        break;
+      case 'sns-share-twitter':
+        baseUrl = btnList.twitter.url;
+        text = ['text', body];
+        hashtags = ['hashtags', tag];
+        url = ['url', location.href];
+        via = ['via', 'yumemiinc'];
+        query = new URLSearchParams([text, hashtags, url, via]).toString();
+        shareUrl = `${baseUrl}?${query}`;
+        window.open(shareUrl);
+        break;
+      default:
+        baseUrl = btnList[this.id.substring(10)]['url'];
+        windowOpenUrl(baseUrl, 'url');
+        break;
+    }
+  })
+}
+
+function windowOpenUrl(url, key) {
+  url = [key, location.href];
+  query = new URLSearchParams([url]).toString();
+  shareUrl = `${baseUrl}?${query}`;
+  window.open(shareUrl);
+}
+</script>
+

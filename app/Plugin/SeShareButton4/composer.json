@@ -1,0 +1,1 @@
+{"name":"ec-cube\/SeShareButton4","version":"1.0.2","description":"SNS\u30b7\u30a7\u30a2\u30dc\u30bf\u30f3\u30d7\u30e9\u30b0\u30a4\u30f3(4\u7cfb)","type":"eccube-plugin","require":{"ec-cube\/plugin-installer":"~0.0.7"},"extra":{"code":"SeShareButton4","id":2111}}

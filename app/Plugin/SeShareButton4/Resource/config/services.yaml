@@ -1,0 +1,76 @@
+##
+# Copyright(c) 2020 Shadow Enterprise, Inc. All rights reserved.
+# http://www.shadow-ep.co.jp/
+##
+
+# パラメータ定義
+parameters:
+    Se_ShareButton_img_upload_dir: 'html/plugin/SeShareButton4/assets/img/'
+    Se_ShareButton_img_valid_extention: '.jpg,.jpeg,.png,.gif'
+
+    Se_ShareButton_default_button_list:
+        email: 
+            name: 'se_share_button.common.label.email'
+            enabled: 1
+            img: 'envelope-square-solid.svg'
+            url: 'mailto:'
+        facebook:
+            name: 'se_share_button.common.label.facebook' 
+            enabled: 1
+            img: 'facebook-square-brands.svg'
+            url: 'https://www.facebook.com/sharer/sharer.php'
+        twitter: 
+            name: 'se_share_button.common.label.twitter'
+            enabled: 1
+            img: 'twitter-square-brands.svg'
+            url: 'https://twitter.com/intent/tweet'
+        line: 
+            name: 'se_share_button.common.label.line'
+            enabled: 1
+            img: 'line-brands.svg'
+            url: 'https://social-plugins.line.me/lineit/share'
+        gplus: 
+            name: 'se_share_button.common.label.gplus'
+            enabled: 1
+            img: 'google-plus-square-brands.svg'
+            url: 'https://plus.google.com/share'
+        weibo: 
+            name: 'se_share_button.common.label.weibo'
+            enabled: 1
+            img: 'weibo-brands.svg'
+            url: 'http://service.weibo.com/share/share.php'
+        reddit: 
+            name: 'se_share_button.common.label.reddit'
+            enabled: 1
+            img: 'reddit-square-brands.svg'
+            url: 'https://www.reddit.com/submit'
+        pinterest: 
+            name: 'se_share_button.common.label.pinterest'
+            enabled: 1
+            img: 'pinterest-square-brands.svg'
+            url: 'http://pinterest.com/pin/create/button/'
+
+# コンテナ定義
+services:
+    SeShareButton.log.formatter.line:
+        class: Monolog\Formatter\LineFormatter
+        arguments:
+            - "[%%datetime%%] %%level_name%% [%%extra.session_id%%] [%%extra.user_id%%] [%%extra.http_method%%, %%extra.url%%, %%extra.ip%%, %%extra.referrer%%, %%extra.user_agent%%]\n--------------------------------------------------------------------------------\n%%message%%\n--------------------------------------------------------------------------------\n"
+
+# ログ定義
+monolog:
+    channels: ['SeShareButton4']
+    handlers:
+        SeShareButton4:
+            type: fingers_crossed
+            action_level: error
+            passthru_level: info
+            handler: Se_ShareButton_rotating_file
+            channels: ['SeShareButton4']
+            channels: ['!event', '!doctrine']
+        Se_ShareButton_rotating_file:
+            type: rotating_file
+            max_files: 60
+            path: '%kernel.logs_dir%/%kernel.environment%/SeShareButton.log'
+            formatter: SeShareButton.log.formatter.line
+            level: info

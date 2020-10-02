@@ -1,0 +1,162 @@
+{#
+ Copyright(c) 2020 Shadow Enterprise, Inc. All rights reserved.
+ http://www.shadow-ep.co.jp/
+#}
+
+{% extends '@admin/default_frame.twig' %}
+
+{% set menus = ['store', 'plugin', 'plugin_list'] %}
+
+{% block title %}{{ 'se_share_button.admin.config.title'|trans }}{% endblock %}
+{% block sub_title %}{{ 'se_share_button.admin.config.sub_title'|trans }}{% endblock %}
+
+{% form_theme form '@admin/Form/bootstrap_4_horizontal_layout.html.twig' %}
+
+{% block stylesheet %}
+    <style>
+        .ec-productRole__SNS_Share svg {
+          background-color: #fff;
+        }
+        #sns-share-email svg path {
+            fill: #000;
+        }
+        #sns-share-facebook svg path {
+            fill: #1777f2;
+        }
+        #sns-share-twitter svg path {
+            fill: #1a95e0;
+        }
+        #sns-share-line svg path {
+            fill: #00b901;
+        }
+        #sns-share-gplus svg path {
+            fill: #db4e41;
+        }
+        #sns-share-weibo svg path {
+            fill: #e0142c;
+        }
+        #sns-share-reddit svg path {
+            fill: #fe4400;
+        }
+        #sns-share-pinterest svg path {
+            fill: #ca1f26;
+        }
+        .flex-item {
+            align-items: center;
+        }
+        .share_button-icon-img,
+        .share_button-icon-img img {
+            max-height: 40px;
+            position: relative;
+        }
+        .share_button-icon-img svg {
+            width: 40px;
+        }
+        .share_button-form-img,
+        .share_button-attention,
+        .share_button-del {
+            margin-left: 20px;
+        }
+    </style>
+{% endblock stylesheet %}
+
+{% block javascript %}
+    <script>
+        self.moveTo(20, 20);
+        self.focus();
+
+        $(function(){
+            /* 登録済みの画像を読み込み */
+            var prefix = "{{ asset('SeShareButton4/assets/img/', 'plugin') }}";
+            if ( $('.img-thumbnail').length ) {
+                $('.img-thumbnail').each(function() {
+                    if ( $(this).attr('data-attr').length ) {
+                        var imgPath = $(this).attr('data-attr');
+                        var pos = imgPath.lastIndexOf('.');
+                        if ( pos !== -1 && imgPath.slice(pos + 1) == 'svg') {
+                            $(this).parents('.share_button-form-img').prev('.share_button-icon-img').load(prefix+imgPath);
+                        } else {
+                            $(this).parents('.share_button-form-img').prev('.share_button-icon-img').append('<img src="'+prefix+imgPath+'" />');
+                        }
+                    }
+                })
+            }
+        })
+
+    </script>
+{% endblock javascript %}
+{% block main %}
+    {{ form_start(form) }}
+
+        {{ form_widget(form._token) }}
+
+        <div class="c-contentsArea__cols">
+            <div class="c-contentsArea__primaryCol">
+                <div class="c-primaryCol">
+                    <div class="card rounded border-0 mb-4">
+                        <div class="card-header">
+                            <p>{{ 'se_share_button.admin.config.header1'|trans }}</p>
+                            <span>{{ 'se_share_button.admin.config.text1'|trans }}</span>
+                        </div>
+                        <div class="card-body">
+                            {% for key, val in eccube_config['Se_ShareButton_default_button_list'] %}
+                                {% set form_key_1 = key~'_enabled' %}
+                                {% set form_key_2 = key~'_url' %}
+                                {% set form_key_3 = key~'_img' %}
+                                {% set form_key_4 = key~'_img_del' %}
+                                <div class="row">
+                                    <div class="col-1"><span>{{ val.name|trans }}</span></div>
+                                    <div class="col-1 mb-2">
+                                        {{ form_label(form[form_key_1]) }}{{ form_widget(form[form_key_1]) }}
+                                        {{ form_errors(form[form_key_1]) }}
+                                    </div>
+                                    <div class="col mb-4">
+                                        <div class="row">
+                                            {{ form_widget(form[form_key_2]) }}
+                                            {{ form_errors(form[form_key_2]) }}
+                                            {% if key != 'email' %}<div>{{ 'se_share_button.common.label.initial'|trans }}:{{ val.url }}</div>{% endif %}
+                                        </div>
+                                        <div class="row flex-item">
+                                            <div id="sns-share-{{ key }}" class="share_button-icon-img"></div>
+                                            <div class="share_button-form-img">
+                                                {{ form_widget(form[form_key_3]) }}
+                                                {{ form_errors(form[form_key_3]) }}
+                                            </div>
+                                            <div class="share_button-attention">{{ 'se_share_button.common.label.imgfile'|trans }} ( {{ eccube_config['Se_ShareButton_img_valid_extention']|replace({',': ' '}) }} )</div>
+                                            <div class="share_button-del">
+                                                {{ form_widget(form[form_key_4]) }}
+                                                {{ form_errors(form[form_key_4]) }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="c-conversionArea">
+            <div class="c-conversionArea__container">
+                <div class="row justify-content-between align-items-center">
+                    <div class="col-6">
+                        <div class="c-conversionArea__leftBlockItem">
+                            <a class="c-beseLink"
+                               href="{{ url('admin_store_plugin') }}">
+                                <i class="fa fa-backward" aria-hidden="true"></i>
+                                <span>{{ 'se_share_button.admin.config.back'|trans }}</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="row align-items-center justify-content-end">
+                            <div class="col-auto">
+                                <button class="btn btn-ec-conversion px-5" type="submit">{{ 'se_share_button.admin.save'|trans }}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+{% endblock %}

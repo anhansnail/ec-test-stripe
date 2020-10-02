@@ -1,0 +1,42 @@
+##
+# Copyright(c) 2020 Shadow Enterprise, Inc. All rights reserved.
+# http://www.shadow-ep.co.jp/
+##
+
+# 共通
+se_share_button.common.code: 'ShareButton'
+se_share_button.common.required: 必須
+
+se_share_button.admin.config.title: シェアボタン
+se_share_button.admin.config.sub_title: プラグイン
+
+se_share_button.admin.config.header1: シェアボタン設定
+se_share_button.admin.config.text1: 'フォームへ共有先のURLを入力し有効化することでページへ表示されます'
+
+se_share_button.common.label.enabled: 有効化
+se_share_button.common.label.initial: 初期値
+se_share_button.common.label.default: デフォ
+se_share_button.common.label.usedefault: デフォルトを使用
+se_share_button.common.label.url: URL
+se_share_button.common.label.imgfile: 登録可能画像
+se_share_button.common.label.email: メーラ起動
+se_share_button.common.label.facebook: facebook
+se_share_button.common.label.twitter: Twitter
+se_share_button.common.label.line: LINE
+se_share_button.common.label.gplus: Google+
+se_share_button.common.label.weibo: 微博
+se_share_button.common.label.reddit: Reddit
+se_share_button.common.label.pinterest: Pinterest
+
+se_share_button.common.placeholder.url: 共有URLを入力してください
+se_share_button.common.message.failed_upload: 画像のアップロードに失敗しました
+se_share_button.common.message.possible_filetype: '利用可能なタイプは「%type%」です'
+se_share_button.common.message.failed_enabled: 最低１つは有効化してください
+
+se_share_button.admin.save.success: 登録しました
+se_share_button.admin.config.back: 戻る
+se_share_button.admin.save: 保存
+
+se_share_button.front.label.share: シェアする
+se_share_button.front.label.detail_announce: 詳細はこちら
+
